@@ -138,7 +138,7 @@ body{font-family:"IBM Plex Sans SC",sans-serif;background:#f0f2f7;color:var(--gr
       <div class="nav-step" id="ns1" onclick="goTo(1)">① 照片指引</div>
       <div class="nav-step" id="ns2" onclick="goTo(2)">② 填写信息</div>
     </div>
-    <button class="nav-admin" onclick="openAdminPage()">管理员后台</button>
+    <button class="nav-admin" id="navAdminBtn" onclick="openAdminPage()">管理员后台</button>
   </div>
 </nav>
 
@@ -300,6 +300,8 @@ const CW = 408, CH = 642;
 const _apiFromQuery = new URLSearchParams(window.location.search).get("api");
 const _apiFromStorage = localStorage.getItem("guanglun_api_base");
 const API_BASE = (_apiFromQuery || _apiFromStorage || "http://127.0.0.1:8787/api").replace(/\/$/, "");
+const ADMIN_KEY = new URLSearchParams(window.location.search).get("adminKey") || "";
+const IS_ADMIN = Boolean(ADMIN_KEY);
 let submissionsCache = [];
 
 // Preload
@@ -309,12 +311,17 @@ const _bgImg = new Image();
 _bgImg.src = BG_SRC;
 
 async function apiRequest(path, options = {}){
+  const {requireAdmin = false, ...fetchOptions} = options;
+  const headers = {
+    "Content-Type": "application/json",
+    ...(fetchOptions.headers || {})
+  };
+  if(requireAdmin && ADMIN_KEY){
+    headers["X-Admin-Key"] = ADMIN_KEY;
+  }
   const response = await fetch(`${API_BASE}${path}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {})
-    }
+    ...fetchOptions,
+    headers
   });
   if(!response.ok){
     const errText = await response.text();
@@ -324,7 +331,7 @@ async function apiRequest(path, options = {}){
   return response.json();
 }
 async function fetchSubmissions(){
-  const data = await apiRequest("/submissions");
+  const data = await apiRequest("/submissions", {requireAdmin: true});
   submissionsCache = Array.isArray(data?.items) ? data.items : [];
   return submissionsCache;
 }
@@ -336,7 +343,8 @@ async function createSubmission(record){
 }
 async function removeSubmission(id){
   await apiRequest(`/submissions/${encodeURIComponent(id)}`, {
-    method: "DELETE"
+    method: "DELETE",
+    requireAdmin: true
   });
 }
 function formatTime(ts){
@@ -361,6 +369,10 @@ function goTo(n){
   window.scrollTo({top:0,behavior:"smooth"});
 }
 function openAdminPage(){
+  if(!IS_ADMIN){
+    alert("当前链接为员工模式，不能访问管理员后台。请使用带 adminKey 的管理员链接。");
+    return;
+  }
   renderAdminList();
   goTo(4);
 }
@@ -464,6 +476,12 @@ async function submitToAdmin(){
 async function renderAdminList(){
   const listEl = document.getElementById("adminList");
   if(!listEl) return;
+  if(!IS_ADMIN){
+    document.getElementById("adminCountText").textContent = "无权限";
+    listEl.innerHTML = `<div class="admin-empty">当前链接无管理员权限。请使用带 adminKey 的管理员链接。</div>`;
+    renderAdminPreview(null);
+    return;
+  }
   let sourceList = [];
   try{
     sourceList = await fetchSubmissions();
@@ -536,6 +554,10 @@ function selectAdminRecord(id){
   renderAdminPreview(record || null);
 }
 async function deleteAdminRecord(id){
+  if(!IS_ADMIN){
+    alert("当前链接无管理员权限。");
+    return;
+  }
   try{
     await removeSubmission(id);
     if(activeAdminRecordId === id) activeAdminRecordId = null;
@@ -562,6 +584,11 @@ function adminDownloadRecord(id, bleed){
 function adminDownloadSelected(bleed){
   if(!activeAdminRecordId) return;
   adminDownloadRecord(activeAdminRecordId, bleed);
+}
+
+const navAdminBtn = document.getElementById("navAdminBtn");
+if(navAdminBtn && !IS_ADMIN){
+  navAdminBtn.style.display = "none";
 }
 
 /*
