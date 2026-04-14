@@ -135,8 +135,7 @@ body{font-family:"IBM Plex Sans SC",sans-serif;background:#f0f2f7;color:var(--gr
   </div>
   <div class="nav-actions">
     <div class="nav-steps">
-      <div class="nav-step" id="ns1" onclick="goTo(1)">① 照片指引</div>
-      <div class="nav-step" id="ns2" onclick="goTo(2)">② 填写信息</div>
+      <div class="nav-step" id="ns1" onclick="goTo(2)">填写信息</div>
     </div>
     <button class="nav-admin" id="navAdminBtn" onclick="openAdminPage()">管理员后台</button>
   </div>
@@ -176,39 +175,7 @@ body{font-family:"IBM Plex Sans SC",sans-serif;background:#f0f2f7;color:var(--gr
       <div class="step-card"><div class="step-num">2</div><h3>填写信息</h3><p>上传照片与员工基本信息</p><div class="step-arrow">›</div></div>
       <div class="step-card"><div class="step-num">3</div><h3>提交后台</h3><p>提交后管理员可在后台预览并下载工卡</p></div>
     </div>
-    <button class="btn-primary" onclick="goTo(1)">立即开始 →</button>
-  </div>
-</div>
-
-<!-- PAGE 1 -->
-<div class="page" id="page1">
-  <div class="page-hdr"><h1>照片拍摄指引</h1><p>请在上传照片前仔细阅读规范，不符合要求的照片将影响工卡效果</p></div>
-  <div class="guide-section"><h2>👔 着装要求</h2>
-    <div class="rule-item"><div class="rule-dot"></div><span>请穿着正式商务装（深色西装或衬衫），避免休闲 T 恤或运动装</span></div>
-    <div class="rule-item"><div class="rule-dot"></div><span>领口整洁，不可戴帽子（宗教原因除外，请提前告知 HR）</span></div>
-    <div class="rule-item"><div class="rule-dot"></div><span>避免佩戴夸张珠宝或配饰，背景推荐白色或浅灰色</span></div>
-  </div>
-  <div class="guide-section"><h2>📸 照片规格</h2>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
-      <div>
-        <div class="rule-item"><div class="rule-dot"></div><span>格式：JPG 或 PNG，最大 5MB</span></div>
-        <div class="rule-item"><div class="rule-dot"></div><span>光线充足，面部清晰无遮挡</span></div>
-      </div>
-      <div>
-        <div class="rule-item"><div class="rule-dot"></div><span>面部居中，正视镜头，表情自然</span></div>
-        <div class="rule-item"><div class="rule-dot"></div><span>照片将自动裁切入工卡 V 形蒙版区域</span></div>
-      </div>
-    </div>
-  </div>
-  <div class="guide-section"><h2>✅ 示例对比</h2>
-    <div class="photo-examples">
-      <div class="photo-ex good"><div class="photo-ph ok"><div style="font-size:2.5rem">🧑‍💼</div><div style="font-size:11px;color:#16a34a;font-weight:600">正面示例</div><div style="font-size:10px;color:var(--gray-500);text-align:center">正式着装·背景简洁<br>面部居中·光线充足</div></div><div class="ex-label good">✓ 符合要求</div></div>
-      <div class="photo-ex bad"><div class="photo-ph bad"><div style="font-size:2.5rem">🤳</div><div style="font-size:11px;color:#dc2626;font-weight:600">反面示例</div><div style="font-size:10px;color:var(--gray-500);text-align:center">自拍角度·背景杂乱<br>光线不足·戴墨镜</div></div><div class="ex-label bad">✗ 不符合要求</div></div>
-    </div>
-  </div>
-  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;width:100%;max-width:720px">
-    <button class="btn-secondary" onclick="goTo(0)">← 返回首页</button>
-    <button class="btn-primary" onclick="goTo(2)">继续填写信息 →</button>
+    <button class="btn-primary" onclick="goTo(2)">立即开始 →</button>
   </div>
 </div>
 
@@ -249,7 +216,7 @@ body{font-family:"IBM Plex Sans SC",sans-serif;background:#f0f2f7;color:var(--gr
       <canvas id="liveCanvas" style="border-radius:10px;display:block;max-width:100%;box-shadow:0 4px 20px rgba(59,47,207,.15);"></canvas>
       <div id="liveHint" style="font-size:11px;color:var(--gray-500);text-align:center;">填写信息后自动生成预览</div>
       <div id="liveActions" style="display:none;flex-direction:column;gap:.6rem;width:100%;">
-        <button class="btn-primary" style="width:100%;" onclick="submitToAdmin()">提交到后台</button>
+        <button class="btn-primary" id="submitBtn" style="width:100%;" onclick="submitToAdmin()">提交到后台</button>
         <button class="btn-primary" style="width:100%;" onclick="openPreview(false)">⬇ 电子版（无出血）</button>
         <button class="btn-primary" style="width:100%;background:linear-gradient(135deg,#1a6fd4,#3b2fcf);" onclick="openPreview(true)">⬇ 印刷版（含出血 3mm）</button>
       </div>
@@ -257,7 +224,7 @@ body{font-family:"IBM Plex Sans SC",sans-serif;background:#f0f2f7;color:var(--gr
     </div>
   </div>
   <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;width:100%;max-width:1100px;margin-top:1.5rem">
-    <button class="btn-secondary" onclick="goTo(1)">← 查看照片指引</button>
+    <button class="btn-secondary" onclick="goTo(0)">← 返回首页</button>
     <div></div>
   </div>
 </div>
@@ -303,6 +270,7 @@ const API_BASE = (_apiFromQuery || _apiFromStorage || "http://127.0.0.1:8787/api
 const ADMIN_KEY = new URLSearchParams(window.location.search).get("adminKey") || "";
 const IS_ADMIN = Boolean(ADMIN_KEY);
 let submissionsCache = [];
+let adminAutoRefreshTimer = null;
 
 // Preload
 const _logoImg = new Image();
@@ -319,10 +287,13 @@ async function apiRequest(path, options = {}){
   if(requireAdmin && ADMIN_KEY){
     headers["X-Admin-Key"] = ADMIN_KEY;
   }
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 30000);
   const response = await fetch(`${API_BASE}${path}`, {
     ...fetchOptions,
-    headers
-  });
+    headers,
+    signal: controller.signal
+  }).finally(() => clearTimeout(timeoutId));
   if(!response.ok){
     const errText = await response.text();
     throw new Error(errText || `HTTP ${response.status}`);
@@ -359,13 +330,21 @@ function escapeHtml(s){
 function goTo(n){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.getElementById("page"+n).classList.add("active");
-  ["ns1","ns2"].forEach((id,i)=>{
-    const el=document.getElementById(id);
-    el.classList.remove("active","done");
-    if(i+1===n)el.classList.add("active");
-    else if(i+1<n)el.classList.add("done");
-  });
+  const navStep = document.getElementById("ns1");
+  if(navStep){
+    navStep.classList.remove("active","done");
+    if(n===2) navStep.classList.add("active");
+    else if(n>2) navStep.classList.add("done");
+  }
   if(n===4) renderAdminList();
+  if(n===4 && IS_ADMIN){
+    if(!adminAutoRefreshTimer){
+      adminAutoRefreshTimer = setInterval(() => renderAdminList(), 8000);
+    }
+  }else if(adminAutoRefreshTimer){
+    clearInterval(adminAutoRefreshTimer);
+    adminAutoRefreshTimer = null;
+  }
   window.scrollTo({top:0,behavior:"smooth"});
 }
 function openAdminPage(){
@@ -466,11 +445,27 @@ async function submitToAdmin(){
     employeeData: {...employeeData},
     photoDataURL
   };
+  const submitBtn = document.getElementById("submitBtn");
+  if(submitBtn){
+    submitBtn.disabled = true;
+    submitBtn.style.opacity = "0.7";
+    submitBtn.textContent = "提交中...";
+  }
+  document.getElementById("submitStatusText").textContent = "正在提交到后台，请稍候...";
   try{
     await createSubmission(record);
     document.getElementById("submitStatusText").textContent = `已提交到后台：${record.employeeData.name}（${record.employeeData.empId}）`;
   }catch(err){
-    document.getElementById("submitStatusText").textContent = "提交失败：请确认后台服务已启动（127.0.0.1:8787）。";
+    const isTimeout = String(err).includes("AbortError");
+    document.getElementById("submitStatusText").textContent = isTimeout
+      ? "提交超时：服务响应较慢，请稍后重试。"
+      : "提交失败：请确认后台服务已启动且网络可用。";
+  }finally{
+    if(submitBtn){
+      submitBtn.disabled = false;
+      submitBtn.style.opacity = "";
+      submitBtn.textContent = "提交到后台";
+    }
   }
 }
 async function renderAdminList(){
@@ -483,6 +478,8 @@ async function renderAdminList(){
     return;
   }
   let sourceList = [];
+  document.getElementById("adminCountText").textContent = "加载中...";
+  listEl.innerHTML = `<div class="admin-empty">正在加载提交记录...</div>`;
   try{
     sourceList = await fetchSubmissions();
   }catch(err){
